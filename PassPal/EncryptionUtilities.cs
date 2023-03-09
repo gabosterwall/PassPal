@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    internal static class EncryptionUtilities
+    public static class EncryptionUtilities
     {
         public static byte[] CreateSecretKey()
         {
@@ -55,7 +55,6 @@ namespace PassPal
             }
             return encryptedVault;
         }
-
         public static Dictionary<string, string> DecryptVault(byte[] encryptedVault, byte[] vaultKey, byte[] iV)
         {
             string jsonVault = string.Empty;

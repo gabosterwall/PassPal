@@ -1,8 +1,8 @@
 ﻿namespace PassPal
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             /*
              *  PassPal command-line application 
@@ -35,30 +35,43 @@
                 // [init] kommando: skapar client, frågar om lösenord, skapar server
                 if (args[0].ToLower() == "init")
                 {
-                    fileManager.Init(args[1], args[2], PasswordUtilities.NewPassword());
+                    string masterPass = PasswordUtilities.NewPassword();
+                    fileManager.Init(args[1], args[2], masterPass);
                 }
 
                 // [create] kommando: skapar ny client som läser in hemlig nyckel från den förstskapade filen om den existerar
                 if (args[0].ToLower() == "create")
                 {
-                    fileManager.Create(args[1], args[2]);
+                    string inputPass = PasswordUtilities.InputPassword();
+                    byte[] secretKey = PasswordUtilities.InputSecretKey();
+                    fileManager.Create(args[1], args[2], inputPass, secretKey);
                 }
 
                 // [get] kommando: frågar om lösenord, om man anger specifik prop skrivs dess lösenord, om inte listas samtliga prop
                 if (args[0].ToLower() == "get" && args.Length < 4)
-                    fileManager.Get(args[1], args[2]);
+                {
+                    string inputPass = PasswordUtilities.InputPassword();
+                    fileManager.Get(args[1], args[2], inputPass);
+                }
                 if (args[0].ToLower() == "get" && args.Length > 3)
-                    fileManager.Get(args[1], args[2], args[3]);
+                {
+                    string inputPass = PasswordUtilities.InputPassword();
+                    fileManager.Get(args[1], args[2], args[3], inputPass);
+                }
 
                 // [set] kommando: 
                 if (args[0].ToLower() == "set" && args.Length < 5)
                 {
-                    fileManager.Set(args[1], args[2], args[3], false);
+                    string inputPass = PasswordUtilities.InputPassword();
+                    fileManager.Set(args[1], args[2], args[3], inputPass, false);
                 }
                 if (args[0].ToLower() == "set" && args.Length > 4)
                 {
                     if (args[4].ToLower() == "-g" || args[4].ToLower() == "--generate")
-                        fileManager.Set(args[1], args[2], args[3], true);
+                    {
+                        string inputPass = PasswordUtilities.InputPassword();
+                        fileManager.Set(args[1], args[2], args[3], inputPass, true);
+                    }
                     else
                         Console.WriteLine($"\n Error: supplied flag not found, command aborted.");
                 }
@@ -66,7 +79,8 @@
                 // [delete] kommando: 
                 if (args[0].ToLower() == "delete")
                 {
-                    fileManager.Delete(args[1], args[2], args[3]);
+                    string inputPass = PasswordUtilities.InputPassword();
+                    fileManager.Delete(args[1], args[2], args[3], inputPass);
                 }
 
                 // [secret] kommando: skriver ut lagrad hemlig nyckel i specificerad client om en sådan finns

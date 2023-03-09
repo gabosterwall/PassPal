@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    internal static class PasswordUtilities
+    public static class PasswordUtilities
     {
         // OBS! För samtliga metoder har kod hämtats från (källa)
         public static string NewPassword()
@@ -102,7 +102,6 @@ namespace PassPal
 
             return new string(charArr);
         }
-
         public static byte[] InputSecretKey()
         {
             Console.WriteLine($"\n Enter your secret key, then press [Enter]");
