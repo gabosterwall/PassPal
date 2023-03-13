@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    internal static class EncryptionUtilities
+    public class EncryptionUtilities
     {
-        public static byte[] CreateSecretKey()
+        public byte[] CreateSecretKey()
         {
             byte[] secretKey = new byte[16]; //Rätt storlek? FRÅGA UNDER HANDLEDNING
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
@@ -20,7 +20,7 @@ namespace PassPal
             return secretKey;
         }
 
-        public static byte[] CreateIV()
+        public byte[] CreateIV()
         {
             byte[] randIV = new byte[16]; //Samma som ovan
 
@@ -31,18 +31,18 @@ namespace PassPal
             return randIV;
         }
 
-        public static byte[] EncryptVault(Dictionary<string, string> vault, byte[] vaultKey, byte[] iV)
+        public byte[] EncryptVault(Dictionary<string, string> vault, byte[] vaultKey, byte[] iV)
         {
             byte[] encryptedVault;
 
             using (Aes aesAlgo = Aes.Create())
             {
-                aesAlgo.Key = vaultKey;
-                aesAlgo.IV = iV;
+                //aesAlgo.Key = vaultKey;
+                //aesAlgo.IV = iV;
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateEncryptor(vaultKey, iV), CryptoStreamMode.Write))
                     {
                         using (StreamWriter sw = new StreamWriter(cs))
                         {
@@ -53,44 +53,92 @@ namespace PassPal
                     }
                 }
             }
+            Console.WriteLine("\nEncryption successfull!");
             return encryptedVault;
         }
-
-        public static Dictionary<string, string> DecryptVault(byte[] encryptedVault, byte[] vaultKey, byte[] iV)
+        public Dictionary<string, string> DecryptVault(byte[] encryptedVault, byte[] vaultKey, byte[] iV)
         {
             string jsonVault = string.Empty;
-            Dictionary<string, string>? decryptedVault = new Dictionary<string, string>();
+            Dictionary<string, string> decryptedVault = new Dictionary<string, string>();
+            try
+            {
+                using (Aes aesAlgo = Aes.Create())
+                {
+                    //aesAlgo.Key = vaultKey;
+                    //aesAlgo.IV = iV;
+
+                    using (MemoryStream ms = new MemoryStream(encryptedVault))
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateDecryptor(vaultKey, iV), CryptoStreamMode.Read))
+                        {
+                            using (StreamReader sr = new StreamReader(cs))
+                            {
+                                jsonVault = sr.ReadToEnd();
+                                //decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonVault) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+                                //while ((jsonVault = sr.ReadLine()) != null)
+                                //{
+                                //    string[] entry = jsonVault.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                //    if (entry.Length == 2)
+                                //    {
+                                //        decryptedVault[entry[0]] = entry[1];
+                                //    }
+                                //}
+                            }
+                        }
+                    }
+                }
+                decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonVault) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+            }
+            catch (CryptographicException)
+            {
+                throw new CryptographicException("\nError: decryption failed because of wrong secret key and/or wrong password, command aborted.");
+            }
+            catch (Exception)
+            {
+                throw new Exception("\nError: decryption failed because of unknown reasons.");
+            }
+            Console.WriteLine("\nDecryption successfull!");
+            return decryptedVault;
+
+        }
+        public Dictionary<string, string> DecryptVault(string args2, byte[] vaultKey)
+        {
+            JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+            byte[] encryptedVault = jsonVault.Vault;
+            byte[] IV = jsonVault.IV;
+
+            string vaultToText = string.Empty;
+            Dictionary<string, string> decryptedVault = new Dictionary<string, string>();
             try
             {
                 using (Aes aesAlgo = Aes.Create())
                 {
                     aesAlgo.Key = vaultKey;
-                    aesAlgo.IV = iV;
+                    aesAlgo.IV = IV;
 
                     using (MemoryStream ms = new MemoryStream(encryptedVault))
                     {
                         using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateDecryptor(), CryptoStreamMode.Read))
                         {
-                            using (StreamReader sr = new StreamReader(cs))
+                            using (StreamReader sr = new StreamReader(cs)) //samma som ovan
                             {
-                                jsonVault = sr.ReadToEnd();
+                                vaultToText = sr.ReadToEnd();
                             }
                         }
                     }
                 }
-                decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonVault); //kommer ej vara null
+                decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(vaultToText) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
             }
             catch (CryptographicException)
             {
-                Console.WriteLine($"\n Decryption failed: incorrect vault key and/or IV.");
-                return null!;
+                throw new Exception("\nError: decryption failed because of wrong vault key or wrong IV.");
             }
             catch (Exception)
             {
-                Console.WriteLine($"\n Error occured: possible wrong password used.");
-                return null!;
+                throw new Exception("\nError: decryption failed because of unknown reasons.");
             }
-            return decryptedVault!;
+            return decryptedVault;
+
         }
     }
 }

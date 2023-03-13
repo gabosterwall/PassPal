@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    internal class JsonVault
+    public class JsonVault
     {
         public byte[] Vault { get; set; }
         public byte[] IV { get; set; }

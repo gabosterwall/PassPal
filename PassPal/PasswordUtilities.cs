@@ -1,133 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PassPal
 {
-    internal static class PasswordUtilities
+    public static class PasswordUtilities
     {
+       
         // OBS! För samtliga metoder har kod hämtats från (källa)
-        public static string NewPassword()
+        
+        public static string GenerateRandomPassword() 
         {
-            Console.WriteLine($"\n Input new master password, then press [Enter]");
-            string masterPass = string.Empty;
-            ConsoleKey key;
-            do
-            {
-                var keyInfo = Console.ReadKey(intercept: true);
-                key = keyInfo.Key;
+            const int length = 20;
+            const string alphaNumericalChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            char[] passwordChars = new char[length];
 
-                if (key == ConsoleKey.Backspace && masterPass.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    masterPass = masterPass[0..^1];
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    Console.Write("*");
-                    masterPass += keyInfo.KeyChar;
-                }
-            }
-            while (key != ConsoleKey.Enter);
-            return masterPass;
-
-        }
-        public static string InputPassword()
-        {
-            Console.WriteLine($"\n Enter your password, then press [Enter]");
-            string pass = string.Empty;
-
-            ConsoleKey key;
-            do
-            {
-                var keyInfo = Console.ReadKey(intercept: true);
-                key = keyInfo.Key;
-
-                if (key == ConsoleKey.Backspace && pass.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    pass = pass[0..^1];
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    Console.Write("*");
-                    pass += keyInfo.KeyChar;
-                }
-            }
-            while (key != ConsoleKey.Enter);
-            return pass;
-        }
-        public static string AddPassword()
-        {
-            Console.WriteLine($"\n Enter the password you want to store, then press [Enter]");
-            string newPass = string.Empty;
-
-            ConsoleKey key;
-            do
-            {
-                var keyInfo = Console.ReadKey(intercept: true);
-                key = keyInfo.Key;
-
-                if (key == ConsoleKey.Backspace && newPass.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    newPass = newPass[0..^1];
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    Console.Write("*");
-                    newPass += keyInfo.KeyChar;
-                }
-            }
-            while (key != ConsoleKey.Enter);
-            return newPass;
-        }
-        public static string GenerateRandomPassword() //Mycket inspiration från Stack, fråga om OK annars komma på ny helt originell kod...
-        {
-            int passLength = 20;
-            string alphaNumericChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-            byte[] passBytes = new byte[passLength];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
-                rng.GetBytes(passBytes);
+                byte[] rngBytes = new byte[length];
+                rng.GetBytes(rngBytes);
+
+                for (int i = 0; i < length; i++)
+                {
+                    int rngIndex = rngBytes[i] % alphaNumericalChars.Length;
+                    passwordChars[i] = alphaNumericalChars[rngIndex];
+                }
             }
+            string generatedInput = new string(passwordChars);
+            Regex regex = new Regex(@"^[a-zA-Z0-9]");
+            string generatedOutput = regex.Replace(generatedInput, "");
 
-            char[] charArr = new char[passLength];
-            for (int i = 0; i < passLength; i++)
-                charArr[i] = alphaNumericChars[passBytes[i] % alphaNumericChars.Length];
-
-            return new string(charArr);
+            if (generatedInput.Length == 20)
+                return generatedOutput;
+            else
+                throw new Exception("\nError: password not generate properly.");
         }
 
-        public static byte[] InputSecretKey()
+        public static string UserInput()
         {
-            Console.WriteLine($"\n Enter your secret key, then press [Enter]");
-            string inputKey = string.Empty;
+            string userInput = string.Empty;
 
-            ConsoleKey key;
-            do
+            while(string.IsNullOrEmpty(userInput))
             {
-                var keyInfo = Console.ReadKey(intercept: true);
-                key = keyInfo.Key;
+                userInput = Console.ReadLine()!;
 
-                if (key == ConsoleKey.Backspace && inputKey.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    inputKey = inputKey[0..^1];
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    Console.Write("*");
-                    inputKey += keyInfo.KeyChar;
-                }
+                if (userInput == null || userInput == "")
+                    Console.WriteLine("\nError: null or empty input value.");
             }
-            while (key != ConsoleKey.Enter);
-            byte[] inputToBytes = Convert.FromBase64String(inputKey);
-            return inputToBytes;
+            return userInput;
+
+            //Console.WriteLine($"\n Enter your secret key, then press [Enter]");
+            //string inputKey = string.Empty;
+            //ConsoleKey key;
+            //do
+            //{
+            //    var keyInfo = Console.ReadKey(intercept: true);
+            //    key = keyInfo.Key;
+
+            //    if (key == ConsoleKey.Backspace && inputKey.Length > 0)
+            //    {
+            //        Console.Write("\b \b");
+            //        inputKey = inputKey[0..^1];
+            //    }
+            //    else if (!char.IsControl(keyInfo.KeyChar))
+            //    {
+            //        Console.Write("*");
+            //        inputKey += keyInfo.KeyChar;
+            //    }
+            //}
+            //while (key != ConsoleKey.Enter);
+            //byte[] inputToBytes = Convert.FromBase64String(inputKey);
+            //return inputToBytes;
         }
     }
 }
