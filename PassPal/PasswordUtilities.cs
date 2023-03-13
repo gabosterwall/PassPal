@@ -12,8 +12,6 @@ namespace PassPal
     public static class PasswordUtilities
     {
        
-        // OBS! För samtliga metoder har kod hämtats från (källa)
-        
         public static string GenerateRandomPassword() 
         {
             const int length = 20;
@@ -32,13 +30,13 @@ namespace PassPal
                 }
             }
             string generatedInput = new string(passwordChars);
-            Regex regex = new Regex(@"^[a-zA-Z0-9]");
-            string generatedOutput = regex.Replace(generatedInput, "");
+            Regex regex = new Regex(@"^[a-zA-Z0-9]{20}$");
+            //string generatedOutput = regex.Replace(generatedInput, "");
 
-            if (generatedInput.Length == 20)
-                return generatedOutput;
+            if (regex.IsMatch(generatedInput))
+                return generatedInput;
             else
-                throw new Exception("\nError: password not generate properly.");
+                return GenerateRandomPassword();
         }
 
         public static string UserInput()
@@ -47,14 +45,14 @@ namespace PassPal
 
             while(string.IsNullOrEmpty(userInput))
             {
-                userInput = Console.ReadLine()!;
+                userInput = Console.ReadLine() ?? throw new ArgumentNullException("\nError: null value input.");
 
                 if (userInput == null || userInput == "")
                     Console.WriteLine("\nError: null or empty input value.");
             }
             return userInput;
 
-            //Console.WriteLine($"\n Enter your secret key, then press [Enter]");
+            //Console.WriteLine($"\n Enter your secret key, then press [Enter]"); ===> Från Stack, men funkar ändå inte för integrationstesterna
             //string inputKey = string.Empty;
             //ConsoleKey key;
             //do

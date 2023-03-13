@@ -78,14 +78,15 @@ namespace PassPal
             {
                 try
                 {
+                    const string keyName = "secret";
+                    byte[] key = Convert.FromBase64String(secretKey);
+                    byte[] vaultKey = CreateVaultKey(pwd, key);
+
                     JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
-                    byte[] key = Convert.FromBase64String(secretKey);
-                    byte[] vaultKey = CreateVaultKey(pwd, key);
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                    
-                    const string keyName = "secret";
+
                     Dictionary<string, byte[]> newClient = new Dictionary<string, byte[]>
                     {
                         { keyName, key }
@@ -114,20 +115,21 @@ namespace PassPal
                 Console.WriteLine($"\nError: {args2} not found.");
         }
 
-        //Överlagrad metod för[get]-kommandot: första skriver ut alla properities i valv, andra ett specifikt prop och dess value
+        //Överlagrad metod för [get]-kommandot: första skriver ut alla properities i valv, andra ett specifikt prop och dess value
         public void Get(string args1, string args2, string pwd)
         {
             if (File.Exists(args2))
             {
-                byte[] secretKey = GetSecretKey(args1);
-                byte[] vaultKey = CreateVaultKey(pwd, secretKey);
                 try
                 {
+                    byte[] secretKey = GetSecretKey(args1);
+                    byte[] vaultKey = CreateVaultKey(pwd, secretKey);
+
                     JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted"); //Är detta OK?
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
-                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
 
+                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     foreach(var item in decryptedVault)
                     {
                         Console.WriteLine($"\n{item.Key}");
@@ -149,20 +151,20 @@ namespace PassPal
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
-
         public void Get(string args1, string args2, string pwd, string args3)
         {
             if (File.Exists(args2))
             {
-                byte[] secretKey = GetSecretKey(args1);
-                byte[] vaultKey = CreateVaultKey(pwd, secretKey);
                 try
                 {
+                    byte[] secretKey = GetSecretKey(args1);
+                    byte[] vaultKey = CreateVaultKey(pwd, secretKey);
+
                     JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
-                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
 
+                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     if (decryptedVault.ContainsKey(args3))
                     {
                         Console.WriteLine($"\n{args3} : {decryptedVault[args3]}");
@@ -192,22 +194,35 @@ namespace PassPal
         {
             if (File.Exists(args2))
             {
-                byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
-                JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2))!; // '!' för att det ej kommer vara null
-                byte[] encryptedVault = jsonVault.Vault;
-                byte[] IV = jsonVault.IV;
-
-                Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                if (decryptedVault == null)
-                    Console.WriteLine($"\nCommand aborted.");
-                else
+                try
                 {
+                    byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
+
+                    JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+                    byte[] encryptedVault = jsonVault.Vault;
+                    byte[] IV = jsonVault.IV;
+
+                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     decryptedVault.Add(args3, passToAdd);
+
                     byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
                     JsonVault updatedVault = new JsonVault(reEncryptedVault, IV);
                     string json = JsonSerializer.Serialize(updatedVault);
+
                     File.WriteAllText(args2, json);
                     Console.WriteLine($"\nNew password successfully stored!");
+                }
+                catch (JsonException)
+                {
+                    Console.WriteLine($"\nError: invalid JSON-format in {args2}, command aborted.");
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine($"\nError: decryption failed because of wrong 'vault key' or 'IV', command aborted.");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"\nUnkown error occurred, command aborted.");
                 }
             }
             else
@@ -217,28 +232,40 @@ namespace PassPal
         {
             if (File.Exists(args2))
             {
-                if (args4 == "-g" || args4 == "--generate")
+                try
                 {
-                    byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
-                    JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2))!; // '!' för att det ej kommer vara null
-                    byte[] encryptedVault = jsonVault.Vault;
-                    byte[] IV = jsonVault.IV;
-
-                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                    if (decryptedVault == null)
-                        Console.WriteLine($"\nCommand aborted.");
-                    else
+                    if (args4 == "-g" || args4 == "--generate")
                     {
+                        byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
+
+                        JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+                        byte[] encryptedVault = jsonVault.Vault;
+                        byte[] IV = jsonVault.IV;
+
+                        Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                         decryptedVault.Add(args3, passToAdd);
+
                         byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
                         JsonVault updatedVault = new JsonVault(reEncryptedVault, IV);
                         string json = JsonSerializer.Serialize(updatedVault);
+
                         File.WriteAllText(args2, json);
-                        Console.WriteLine($"\nNew password successfully stored!");
-                    }
+                        Console.WriteLine($"\nNew password successfully stored!");                    }
+                    else
+                        Console.WriteLine($"\nError: {args4} not a valid flag, command aborted.");
                 }
-                else
-                    Console.WriteLine($"\nError: {args4} not a valid flag, command aborted.");
+                catch (JsonException)
+                {
+                    Console.WriteLine($"\nError: invalid JSON-format in {args2}, command aborted.");
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine($"\nError: decryption failed because of wrong 'vault key' or 'IV', command aborted.");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"\nUnkown error occurred, command aborted.");
+                }
             }
             else
                 Console.WriteLine($"\nError: {args2} not found.");
@@ -248,17 +275,15 @@ namespace PassPal
         {
             if (File.Exists(args2))
             {
-                byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
-                JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2))!; // '!' för att det ej kommer vara null
-                byte[] encryptedVault = jsonVault.Vault;
-                byte[] IV = jsonVault.IV;
-
-                Dictionary<string, string>? decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                if (decryptedVault == null)
-                    Console.WriteLine($"\nCommand aborted.");
-                else
+                try
                 {
-                    if (decryptedVault.ContainsKey(args3))
+                    byte[] vaultKey = CreateVaultKey(pwd, GetSecretKey(args1));
+                    JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
+                    byte[] encryptedVault = jsonVault.Vault;
+                    byte[] IV = jsonVault.IV;
+
+                    Dictionary<string, string>? decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
+                    if(decryptedVault.ContainsKey(args3))
                     {
                         decryptedVault.Remove(args3);
                         byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
@@ -270,15 +295,35 @@ namespace PassPal
                     else
                         Console.WriteLine($"\nError: {args3} does not exist in the vault, command aborted. ");
                 }
+                catch (JsonException)
+                {
+                    Console.WriteLine($"\nError: invalid JSON-format in {args2}, command aborted.");
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine($"\nError: decryption failed because of wrong 'vault key' or 'IV', command aborted.");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"\nUnkown error occurred, command aborted.");
+                }
             }
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
         public void Secret(string filePath)
         {
-            byte[] secretKey = GetSecretKey(filePath);
-            string displayKey = Convert.ToBase64String(secretKey);
-            Console.WriteLine($"\nSecret key for '{filePath}' : {displayKey}");
+            try
+            {
+                byte[] secretKey = GetSecretKey(filePath);
+                string displayKey = Convert.ToBase64String(secretKey);
+                Console.WriteLine($"\nSecret key for '{filePath}' : {displayKey}");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("\nError: something went wrong" + ex.Message);
+            }
+            
         }
         
     }
