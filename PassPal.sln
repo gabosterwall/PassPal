@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassPal", "PassPal\PassPal.csproj", "{06D976FA-6A23-4A55-B43C-0C3F6934FB64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PassPal", "PassPal\PassPal.csproj", "{06D976FA-6A23-4A55-B43C-0C3F6934FB64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassPalTest", "PassPalTest\PassPalTest.csproj", "{3E8B9F45-8A0E-422D-8642-528C4EA04B41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassPalTest", "PassPalTest\PassPalTest.csproj", "{E203EE57-6C0D-4443-96D1-85EC96DC266F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{06D976FA-6A23-4A55-B43C-0C3F6934FB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D976FA-6A23-4A55-B43C-0C3F6934FB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06D976FA-6A23-4A55-B43C-0C3F6934FB64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E8B9F45-8A0E-422D-8642-528C4EA04B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E8B9F45-8A0E-422D-8642-528C4EA04B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E8B9F45-8A0E-422D-8642-528C4EA04B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E8B9F45-8A0E-422D-8642-528C4EA04B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E203EE57-6C0D-4443-96D1-85EC96DC266F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E203EE57-6C0D-4443-96D1-85EC96DC266F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E203EE57-6C0D-4443-96D1-85EC96DC266F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E203EE57-6C0D-4443-96D1-85EC96DC266F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

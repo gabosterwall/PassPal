@@ -1,4 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PassPal;
 using System;
 using System.IO;
@@ -20,7 +19,6 @@ namespace PassPalTest
 
         // Used to mock Console and capture output.
         StringWriter output;
-
 
         ////
         /// Setup and TearDown
@@ -360,3 +358,4 @@ namespace PassPalTest
 
     }
 }
+
