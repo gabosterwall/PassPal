@@ -37,12 +37,12 @@ namespace PassPal
 
             using (Aes aesAlgo = Aes.Create())
             {
-                //aesAlgo.Key = vaultKey;
-                //aesAlgo.IV = iV;
-
+                aesAlgo.Key = vaultKey;
+                aesAlgo.IV = iV;
+                ICryptoTransform encryptor = aesAlgo.CreateEncryptor(aesAlgo.Key, aesAlgo.IV);
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateEncryptor(vaultKey, iV), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
                         using (StreamWriter sw = new StreamWriter(cs))
                         {
@@ -64,25 +64,17 @@ namespace PassPal
             {
                 using (Aes aesAlgo = Aes.Create())
                 {
-                    //aesAlgo.Key = vaultKey;
-                    //aesAlgo.IV = iV;
+                    aesAlgo.Key = vaultKey;
+                    aesAlgo.IV = iV;
 
+                    ICryptoTransform decryptor = aesAlgo.CreateDecryptor(aesAlgo.Key, aesAlgo.IV);
                     using (MemoryStream ms = new MemoryStream(encryptedVault))
                     {
-                        using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateDecryptor(vaultKey, iV), CryptoStreamMode.Read))
+                        using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                         {
                             using (StreamReader sr = new StreamReader(cs))
                             {
                                 jsonVault = sr.ReadToEnd();
-                                //decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonVault) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
-                                //while ((jsonVault = sr.ReadLine()) != null)
-                                //{
-                                //    string[] entry = jsonVault.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                //    if (entry.Length == 2)
-                                //    {
-                                //        decryptedVault[entry[0]] = entry[1];
-                                //    }
-                                //}
                             }
                         }
                     }
@@ -101,44 +93,6 @@ namespace PassPal
             return decryptedVault;
 
         }
-        public Dictionary<string, string> DecryptVault(string args2, byte[] vaultKey)
-        {
-            JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
-            byte[] encryptedVault = jsonVault.Vault;
-            byte[] IV = jsonVault.IV;
-
-            string vaultToText = string.Empty;
-            Dictionary<string, string> decryptedVault = new Dictionary<string, string>();
-            try
-            {
-                using (Aes aesAlgo = Aes.Create())
-                {
-                    aesAlgo.Key = vaultKey;
-                    aesAlgo.IV = IV;
-
-                    using (MemoryStream ms = new MemoryStream(encryptedVault))
-                    {
-                        using (CryptoStream cs = new CryptoStream(ms, aesAlgo.CreateDecryptor(), CryptoStreamMode.Read))
-                        {
-                            using (StreamReader sr = new StreamReader(cs)) //samma som ovan
-                            {
-                                vaultToText = sr.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-                decryptedVault = JsonSerializer.Deserialize<Dictionary<string, string>>(vaultToText) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
-            }
-            catch (CryptographicException)
-            {
-                throw new Exception("\nError: decryption failed because of wrong vault key or wrong IV.");
-            }
-            catch (Exception)
-            {
-                throw new Exception("\nError: decryption failed because of unknown reasons.");
-            }
-            return decryptedVault;
-
-        }
+        
     }
 }

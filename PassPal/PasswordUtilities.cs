@@ -11,48 +11,73 @@ namespace PassPal
 {
     public static class PasswordUtilities
     {
-       
-        public static string GenerateRandomPassword() 
+
+        public static string GenerateRandomPassword()
         {
-            const int length = 20;
+            const int pwdSize = 20;
             const string alphaNumericalChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            char[] passwordChars = new char[length];
+            byte[] rngBytes = new byte[pwdSize];
 
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
-                byte[] rngBytes = new byte[length];
                 rng.GetBytes(rngBytes);
-
-                for (int i = 0; i < length; i++)
-                {
-                    int rngIndex = rngBytes[i] % alphaNumericalChars.Length;
-                    passwordChars[i] = alphaNumericalChars[rngIndex];
-                }
             }
-            string generatedInput = new string(passwordChars);
+
+            // Nu har vi 20 random bytes i rngBytes
+
+
+            // Bygg upp en sträng med hjälp av alphaNumericalChars:
+
+            string generatedPwd = string.Empty;
+            foreach (byte item in rngBytes)
+            {
+                generatedPwd += alphaNumericalChars[item % alphaNumericalChars.Length];
+            }
+
+            // Nu (kanske) vi har en sträng bestående av random chars från string alphaNumericalChars
+
+
+            // Kolla så att det överensstämmer med givet Regex: 
+
             Regex regex = new Regex(@"^[a-zA-Z0-9]{20}$");
-            //string generatedOutput = regex.Replace(generatedInput, "");
 
-            if (regex.IsMatch(generatedInput))
-                return generatedInput;
+            if (!regex.IsMatch(generatedPwd))
+                throw new Exception("\nError: password not generated properly.");
             else
-                return GenerateRandomPassword();
-        }
+                return generatedPwd;
 
-        public static string UserInput()
+        }
+        public static string UserKeyInput()
         {
             string userInput = string.Empty;
 
-            while(string.IsNullOrEmpty(userInput))
+            while (string.IsNullOrEmpty(userInput))
             {
                 userInput = Console.ReadLine() ?? throw new ArgumentNullException("\nError: null value input.");
 
                 if (userInput == null || userInput == "")
                     Console.WriteLine("\nError: null or empty input value.");
+                else
+                    break;
+            }
+            return userInput;
+        }
+        public static string UserPasswordInput()
+        {
+            string userInput = string.Empty;
+
+            while(string.IsNullOrEmpty(userInput) /*|| userInput.Length < 20*/)                                                                         //LÄGG TILL EFTER INLÄMNING
+            {
+                userInput = Console.ReadLine() ?? throw new ArgumentNullException("\nNull value or empty input.");
+
+                if (userInput == null || userInput == "")
+                    Console.WriteLine("\nError: null or empty input value.");
+                //else if (userInput.Length < 20)                                                                                                       //LÄGG TILL EFTER INLÄMNING
+                //    Console.WriteLine("\nError: password must be at least 20 characters long.");
             }
             return userInput;
 
-            //Console.WriteLine($"\n Enter your secret key, then press [Enter]"); ===> Från Stack, men funkar ändå inte för integrationstesterna
+            //Console.WriteLine($"\n Enter your secret key, then press [Enter]"); ===> Från Stack, men funkar ändå inte för integrationstesterna        //LÄGG TILL EFTER INLÄMNING
             //string inputKey = string.Empty;
             //ConsoleKey key;
             //do

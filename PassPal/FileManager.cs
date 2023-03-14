@@ -87,16 +87,23 @@ namespace PassPal
                     byte[] IV = jsonVault.IV;
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
 
-                    Dictionary<string, byte[]> newClient = new Dictionary<string, byte[]>
+                    if(decryptedVault != null)
                     {
-                        { keyName, key }
-                    };
-                    string json = JsonSerializer.Serialize(newClient);
-                    File.WriteAllText(args1, json);
-                    if(File.Exists(args1))
-                        Console.WriteLine($"\nNew client '{args1}' successfully created!");
+                        Dictionary<string, byte[]> newClient = new Dictionary<string, byte[]>
+                        {
+                            { keyName, key }
+                        };
+                        string json = JsonSerializer.Serialize(newClient);
+                        File.WriteAllText(args1, json);
+                        if (File.Exists(args1))
+                            Console.WriteLine($"\nNew client '{args1}' successfully created!");
+                        else
+                            Console.WriteLine($"\nError: {args1} could not be created.");
+                    }
                     else
-                        Console.WriteLine($"\nError: {args1} could not be created.");
+                        Console.WriteLine("\nError: decryption failed, wrong key and/or password used.");
+                    
+
                 }
                 catch (CryptographicException ce)
                 {
@@ -116,7 +123,7 @@ namespace PassPal
         }
 
         //Överlagrad metod för [get]-kommandot: första skriver ut alla properities i valv, andra ett specifikt prop och dess value
-        public void Get(string args1, string args2, string pwd)
+        public void Get(string args1, string args2, string pwd) // Kolla under handledning
         {
             if (File.Exists(args2))
             {
@@ -151,7 +158,7 @@ namespace PassPal
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
-        public void Get(string args1, string args2, string pwd, string args3)
+        public void Get(string args1, string args2, string pwd, string args3) // Kolla under handledning
         {
             if (File.Exists(args2))
             {
@@ -313,17 +320,9 @@ namespace PassPal
         }
         public void Secret(string filePath)
         {
-            try
-            {
-                byte[] secretKey = GetSecretKey(filePath);
-                string displayKey = Convert.ToBase64String(secretKey);
-                Console.WriteLine($"\nSecret key for '{filePath}' : {displayKey}");
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("\nError: something went wrong" + ex.Message);
-            }
-            
+            byte[] secretKey = GetSecretKey(filePath);
+            string displayKey = Convert.ToBase64String(secretKey);
+            Console.WriteLine($"\nSecret key for '{filePath}' : {displayKey}");
         }
         
     }
