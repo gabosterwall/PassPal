@@ -52,32 +52,53 @@
                 // [Get]-kommando: 
                 if (args[0].ToLower() == "get" && args.Length == 3)
                 {
-                    Console.WriteLine("\nEnter your password: ");
-                    //string inputPass = PasswordUtilities.UserInput();
-                    fileManager.Get(args[1], args[2], PasswordUtilities.UserPasswordInput());
+                    if (File.Exists(args[1]))
+                    {
+                        Console.WriteLine("\nEnter your password: ");
+                        string inputPass = PasswordUtilities.UserPasswordInput();
+                        fileManager.Get(args[1], args[2], inputPass);
+                    }
+                    else
+                        Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
                 if (args[0].ToLower() == "get" && args.Length == 4)
                 {
-                    Console.WriteLine("\nEnter your password: ");
-                    //string inputPass = PasswordUtilities.UserInput();
-                    fileManager.Get(args[1], args[2], PasswordUtilities.UserPasswordInput(), args[3]);
+                    if (File.Exists(args[1]))
+                    {
+                        Console.WriteLine("\nEnter your password: ");
+                        string inputPass = PasswordUtilities.UserPasswordInput();
+                        fileManager.Get(args[1], args[2], inputPass, args[3]);
+                    }
+                    else
+                        Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
                 // [Set]-kommando:
                 if (args[0].ToLower() == "set" && args.Length == 4)
                 {
-                    Console.WriteLine("\nEnter your password: ");
-                    string inputPass = PasswordUtilities.UserPasswordInput();
-                    Console.WriteLine($"\nEnter the password you want to store for '{args[3]}': ");
-                    string pwdToAdd = PasswordUtilities.UserPasswordInput();
-                    fileManager.Set(args[1], args[2], args[3], inputPass, pwdToAdd);
+                    if (File.Exists(args[1]))
+                    {
+                        Console.WriteLine("\nEnter your password: ");
+                        string inputPass = PasswordUtilities.UserPasswordInput();
+                        Console.WriteLine($"\nEnter the password you want to store for '{args[3]}': ");
+                        string pwdToAdd = PasswordUtilities.UserPasswordInput();
+                        fileManager.Set(args[1], args[2], args[3], inputPass, pwdToAdd);
+                    }
+                    else
+                        Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
+
                 if (args[0].ToLower() == "set" && args.Length == 5)
                 {
-                    Console.WriteLine("\nEnter your password: ");
-                    string inputPass = PasswordUtilities.UserPasswordInput();
-                    string pwdToAdd = PasswordUtilities.GenerateRandomPassword();
-                    fileManager.Set(args[1], args[2], args[3], args[4], inputPass, pwdToAdd);
+                    if (File.Exists(args[1]))
+                    {
+                        Console.WriteLine("\nEnter your password: ");
+                        string inputPass = PasswordUtilities.UserPasswordInput();
+                        string pwdToAdd = PasswordUtilities.GenerateRandomPassword();
+                        fileManager.Set(args[1], args[2], args[3], args[4], inputPass, pwdToAdd);
+                    }
+                    else
+                        Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
                 // [delete] kommando: 

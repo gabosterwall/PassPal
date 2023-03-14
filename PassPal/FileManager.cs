@@ -85,8 +85,9 @@ namespace PassPal
                     JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
+                    
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-
+                    
                     if(decryptedVault != null)
                     {
                         Dictionary<string, byte[]> newClient = new Dictionary<string, byte[]>
@@ -95,15 +96,15 @@ namespace PassPal
                         };
                         string json = JsonSerializer.Serialize(newClient);
                         File.WriteAllText(args1, json);
-                        if (File.Exists(args1))
-                            Console.WriteLine($"\nNew client '{args1}' successfully created!");
-                        else
-                            Console.WriteLine($"\nError: {args1} could not be created.");
+                        Console.WriteLine("\nDecryption successfull!");
                     }
                     else
-                        Console.WriteLine("\nError: decryption failed, wrong key and/or password used.");
-                    
+                        Console.WriteLine("\nDecryption failed.");
 
+                    if (File.Exists(args1))
+                        Console.WriteLine($"\nNew client '{args1}' successfully created!");
+                    else
+                        Console.WriteLine($"\nError: {args1} could not be created.");
                 }
                 catch (CryptographicException ce)
                 {
@@ -137,9 +138,9 @@ namespace PassPal
                     byte[] IV = jsonVault.IV;
 
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                    foreach(var item in decryptedVault)
+                    foreach (var item in decryptedVault)
                     {
-                        Console.WriteLine($"\n{item.Key}");
+                        Console.WriteLine($"\r\n{item.Key}");
                     }
                 }
                 catch(JsonException)
@@ -174,7 +175,7 @@ namespace PassPal
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     if (decryptedVault.ContainsKey(args3))
                     {
-                        Console.WriteLine($"\n{args3} : {decryptedVault[args3]}");
+                        Console.WriteLine($"\r\n{args3} : {decryptedVault[args3]}");
                     }
                     else
                         Console.WriteLine($"\nProperty '{args3}' could not be found.");
@@ -289,8 +290,8 @@ namespace PassPal
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
 
-                    Dictionary<string, string>? decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                    if(decryptedVault.ContainsKey(args3))
+                    Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
+                    if (decryptedVault.ContainsKey(args3))
                     {
                         decryptedVault.Remove(args3);
                         byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
