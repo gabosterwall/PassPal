@@ -100,9 +100,14 @@
                 // Delete-kommando
                 if (args[0].ToLower() == "delete")
                 {
-                    Console.WriteLine("\nEnter your password: ");
-                    string inputPass = PasswordUtilities.UserPasswordInput();
-                    fileManager.Delete(args[1], args[2], args[3], inputPass);
+                    if (File.Exists(args[1]))
+                    {
+                        Console.WriteLine("\nEnter your password: ");
+                        string inputPass = PasswordUtilities.UserPasswordInput();
+                        fileManager.Delete(args[1], args[2], args[3], inputPass);
+                    }
+                    else
+                        Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
                 // Secret-kommando
