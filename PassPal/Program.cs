@@ -80,9 +80,7 @@
                     {
                         Console.WriteLine("\nEnter your password: ");
                         string inputPass = PasswordUtilities.UserPasswordInput();
-                        Console.WriteLine($"\nEnter the password you want to store for '{args[3]}': ");
-                        string pwdToAdd = PasswordUtilities.UserPasswordInput();
-                        fileManager.Set(args[1], args[2], args[3], inputPass, pwdToAdd);
+                        fileManager.Set(args[1], args[2], inputPass, args[3]);
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
@@ -94,8 +92,7 @@
                     {
                         Console.WriteLine("\nEnter your password: ");
                         string inputPass = PasswordUtilities.UserPasswordInput();
-                        string pwdToAdd = PasswordUtilities.GenerateRandomPassword();
-                        fileManager.Set(args[1], args[2], args[3], args[4], inputPass, pwdToAdd);
+                        fileManager.Set(args[1], args[2], inputPass, args[3], args[4]);
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");

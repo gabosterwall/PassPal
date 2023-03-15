@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace PassPal
 {
@@ -90,13 +91,14 @@ namespace PassPal
                     
                     if(decryptedVault != null)
                     {
+                        Console.WriteLine("\nDecryption successfull!");
+
                         Dictionary<string, byte[]> newClient = new Dictionary<string, byte[]>
                         {
                             { keyName, key }
                         };
                         string json = JsonSerializer.Serialize(newClient);
                         File.WriteAllText(args1, json);
-                        Console.WriteLine("\nDecryption successfull!");
                     }
                     else
                         Console.WriteLine("\nDecryption failed.");
@@ -140,7 +142,7 @@ namespace PassPal
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     foreach (var item in decryptedVault)
                     {
-                        Console.WriteLine($"\r\n{item.Key}");
+                        Console.WriteLine(item.Key);
                     }
                 }
                 catch(JsonException)
@@ -175,7 +177,7 @@ namespace PassPal
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
                     if (decryptedVault.ContainsKey(args3))
                     {
-                        Console.WriteLine($"\r\n{args3} : {decryptedVault[args3]}");
+                        Console.WriteLine(decryptedVault[args3]);
                     }
                     else
                         Console.WriteLine($"\nProperty '{args3}' could not be found.");
@@ -198,7 +200,7 @@ namespace PassPal
         }
 
         // Metod för [set]-kommando: 
-        public void Set(string args1, string args2, string args3, string pwd, string passToAdd)
+        public void Set(string args1, string args2, string pwd, string args3)
         {
             if (File.Exists(args2))
             {
@@ -210,8 +212,9 @@ namespace PassPal
                     byte[] encryptedVault = jsonVault.Vault;
                     byte[] IV = jsonVault.IV;
 
+                    string pwdToAdd = PasswordUtilities.UserPasswordInput();
                     Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                    decryptedVault.Add(args3, passToAdd);
+                    decryptedVault.Add(args3, pwdToAdd);
 
                     byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
                     JsonVault updatedVault = new JsonVault(reEncryptedVault, IV);
@@ -236,7 +239,7 @@ namespace PassPal
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
-        public void Set(string args1, string args2, string args3, string args4, string pwd, string passToAdd)
+        public void Set(string args1, string args2, string pwd, string args3, string args4)
         {
             if (File.Exists(args2))
             {
@@ -250,8 +253,9 @@ namespace PassPal
                         byte[] encryptedVault = jsonVault.Vault;
                         byte[] IV = jsonVault.IV;
 
+                        string pwdToAdd = PasswordUtilities.GenerateRandomPassword();
                         Dictionary<string, string> decryptedVault = DecryptVault(encryptedVault, vaultKey, IV);
-                        decryptedVault.Add(args3, passToAdd);
+                        decryptedVault.Add(args3, pwdToAdd);
 
                         byte[] reEncryptedVault = EncryptVault(decryptedVault, vaultKey, IV);
                         JsonVault updatedVault = new JsonVault(reEncryptedVault, IV);
@@ -323,7 +327,7 @@ namespace PassPal
         {
             byte[] secretKey = GetSecretKey(filePath);
             string displayKey = Convert.ToBase64String(secretKey);
-            Console.WriteLine($"\nSecret key for '{filePath}' : {displayKey}");
+            Console.WriteLine(displayKey);
         }
         
     }
