@@ -13,7 +13,8 @@ namespace PassPal
         //Metod för att generera slumpmässig nyckel
         public byte[] CreateSecretKey()
         {
-            byte[] secretKey = new byte[16]; //Rätt storlek? FRÅGA UNDER HANDLEDNING
+            const int keySize = 16;
+            byte[] secretKey = new byte[keySize]; //Rätt storlek? FRÅGA UNDER HANDLEDNING
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(secretKey);
@@ -24,8 +25,8 @@ namespace PassPal
         // Metod för att generera slumpmässigt IV
         public byte[] CreateIV()
         {
-            byte[] randIV = new byte[16]; //Samma som ovan
-
+            const int keySize = 16;
+            byte[] randIV = new byte[keySize]; //Samma som ovan
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randIV);
@@ -57,12 +58,11 @@ namespace PassPal
             return encryptedVault;
         }
 
-        // Dekrypteringsmetod
+        // Dekrypteringsmetod som även deserialiser och returnerar valv med lösenord
         public Dictionary<string, string> DecryptVault(byte[] encryptedVault, byte[] vaultKey, byte[] iV)
         {
             string simpleText = string.Empty;
             Dictionary<string, string> decryptedVault = new Dictionary<string, string>();
-
             try
             {
                 using (Aes aesAlgo = Aes.Create())

@@ -8,7 +8,7 @@
              *  PassPal command-line application 
              *  
              *  By Gabriél Österwall, Henrik Widercrantz, Josefine Bäckström
-             *  2023-03-09
+             *  Created: 2023-03-15
              * 
              */
 
@@ -31,15 +31,15 @@
                     exit   -  exit the program");
                 }
 
-                // [init] kommando: skapar client, frågar om lösenord, skapar server
-                if (args[0].ToLower() == "init")
+                // Init-kommando
+                if (args[0].ToLower() == "init" && args.Length == 3)
                 {
                     Console.WriteLine("\nEnter new master password: ");
                     //string masterPass = PasswordUtilities.UserInput();
                     fileManager.Init(args[1], args[2], PasswordUtilities.UserPasswordInput());
                 }
 
-                // [create] kommando: skapar ny client som läser in hemlig nyckel från den förstskapade filen om den existerar
+                // Create-kommando
                 if (args[0].ToLower() == "create" && args.Length == 3)
                 {
                     Console.WriteLine("\nEnter your password: ");
@@ -49,8 +49,8 @@
                     fileManager.Create(args[1], args[2], inputPass, secretKey);
                 }
 
-                // [Get]-kommando: 
-                if (args[0].ToLower() == "get" && args.Length == 3)
+                // Get-kommando
+                if (args[0].ToLower() == "get" && args.Length == 3) // För att lista alla props
                 {
                     if (File.Exists(args[1]))
                     {
@@ -61,7 +61,7 @@
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
-                if (args[0].ToLower() == "get" && args.Length == 4)
+                if (args[0].ToLower() == "get" && args.Length == 4) // För att lista lösenord kopplat till specifikt prop
                 {
                     if (File.Exists(args[1]))
                     {
@@ -73,8 +73,8 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // [Set]-kommando:
-                if (args[0].ToLower() == "set" && args.Length == 4)
+                // Set-kommando
+                if (args[0].ToLower() == "set" && args.Length == 4) // För att ange eget lösenord
                 {
                     if (File.Exists(args[1]))
                     {
@@ -85,8 +85,7 @@
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
-
-                if (args[0].ToLower() == "set" && args.Length == 5)
+                if (args[0].ToLower() == "set" && args.Length == 5) // För att generera ett lösenord enligt Regex: [a-zA-Z0-9]{20}
                 {
                     if (File.Exists(args[1]))
                     {
@@ -98,7 +97,7 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // [delete] kommando: 
+                // Delete-kommando
                 if (args[0].ToLower() == "delete")
                 {
                     Console.WriteLine("\nEnter your password: ");
@@ -106,7 +105,7 @@
                     fileManager.Delete(args[1], args[2], args[3], inputPass);
                 }
 
-                // [secret] kommando: skriver ut lagrad hemlig nyckel i specificerad client om en sådan finns
+                // Secret-kommando
                 if (args[0].ToLower() == "secret" && args.Length == 2)
                 {
                     if (File.Exists(args[1]))
@@ -117,7 +116,7 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // [exit] kommando: avslutar sessionen
+                // Exit-kommando
                 if (args[0].ToLower() == "exit")
                 {
                     Console.WriteLine("\nThank you for using PassPal!");
@@ -127,7 +126,7 @@
             else
             {
                 Console.WriteLine("\nHello and welcome to PassPal, your handy password manager command-line application!");
-                Console.WriteLine("\nFor a list of available command, please type 'help'");
+                Console.WriteLine("\nFor a list of available commands, please type 'help'");
             }
                 
         }
