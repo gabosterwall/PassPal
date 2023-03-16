@@ -14,7 +14,7 @@ namespace PassPal
     {
         private void CreateClient(string args1)
         {
-            const string keyName = "secret"; //för att inte hårdkoda...
+            const string keyName = "secret";
             byte[] secretKey = CreateSecretKey();
             Dictionary<string, byte[]> client = new Dictionary<string, byte[]>
             {
@@ -27,7 +27,7 @@ namespace PassPal
             Console.WriteLine($"\nYour secret key: {displayKey}");
         }
 
-        //Metod för att läsa av den hemliga nyckeln från Client SOM ÄNTLIGEN VILL FUNKA
+        // Method for retrieving secret key from given client
         private byte[] GetSecretKey(string args1)
         {
             const string keyName = "secret";
@@ -36,10 +36,10 @@ namespace PassPal
             return keyFromClient[keyName]; 
         }
 
-        //Metod för att generera en vault key med Secret Key och Master Password
+        // Method for generating the vault key from master password and secret key
         private byte[] CreateVaultKey(string masterPass, byte[] secretKey)
         {
-            int iterations = 10000; //antal iterationer, rekommenderad mängd
+            int iterations = 10000; //iterations, recommended amount
             byte[] vaultKey;
             int keySize = 32;
 
@@ -50,7 +50,7 @@ namespace PassPal
             return vaultKey;
         }
 
-        //Metod för att skapa en ny server.json innehållandes ett nytt enkrypterat, tomt valv + IV
+        // Init-command method
         public void Init(string args1, string args2, string pwd)
         {
             CreateClient(args1); //Skapar client
@@ -72,7 +72,7 @@ namespace PassPal
                 Console.WriteLine("\nError: server could not be created.");
         }
 
-        //Metod för [create]-kommando
+        // Create-command method
         public void Create(string args1, string args2, string pwd, string secretKey) // EJ KLAR FIXA SEN
         {
             if (File.Exists(args2))
@@ -125,8 +125,8 @@ namespace PassPal
                 Console.WriteLine($"\nError: {args2} not found.");
         }
 
-        //Överlagrad metod för [get]-kommandot: första skriver ut alla properities i valv, andra ett specifikt prop och dess value
-        public void Get(string args1, string args2, string pwd) // Kolla under handledning
+        // Get-command overloaded method; one for listing all existing props and one for listing specific prop's password
+        public void Get(string args1, string args2, string pwd)
         {
             if (File.Exists(args2))
             {
@@ -161,7 +161,7 @@ namespace PassPal
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
-        public void Get(string args1, string args2, string pwd, string args3) // Kolla under handledning
+        public void Get(string args1, string args2, string pwd, string args3)
         {
             if (File.Exists(args2))
             {
@@ -199,7 +199,7 @@ namespace PassPal
                 Console.WriteLine($"\nError: {args2} not found.");
         }
 
-        // Metod för [set]-kommando: 
+        // Set-command overloaded method; one that takes user input of new password and one that generates a random one
         public void Set(string args1, string args2, string pwd, string args3)
         {
             if (File.Exists(args2))
@@ -283,6 +283,7 @@ namespace PassPal
                 Console.WriteLine($"\nError: {args2} not found.");
         }
 
+        // Delete-command method
         public void Delete(string args1, string args2, string args3, string pwd)
         {
             if (File.Exists(args2))
@@ -323,6 +324,8 @@ namespace PassPal
             else
                 Console.WriteLine($"\nError: {args2} not found.");
         }
+
+        // Secret-command method
         public void Secret(string filePath)
         {
             byte[] secretKey = GetSecretKey(filePath);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    public static class PasswordUtilities   // Statiska metoder för att säkerställa korrekta inputs från användare plus metod för att generera ett lösenord enligt Regex: [a-zA-Z0-9]{20}
+    public static class PasswordUtilities   // User input methods + password generator in case of -g or --generate
     {
 
         public static string GenerateRandomPassword()
@@ -23,18 +23,17 @@ namespace PassPal
                 rng.GetBytes(rngBytes);
             }
 
-            // Nu har vi 20 random bytes i rngBytes
+            // Now we have 20 random bytes in rngBytes
 
 
-            // Bygg upp en sträng med hjälp av alphaNumericalChars
-
+            // Build the string-password with alphaNumericalChars:
             string generatedPwd = string.Empty;
             foreach (byte item in rngBytes)
             {
                 generatedPwd += alphaNumericalChars[item % alphaNumericalChars.Length];
             }
 
-            // Kolla så att det överensstämmer med givet Regex: 
+            // Match with required Regex: 
 
             Regex regex = new Regex(@"^[a-zA-Z0-9]{20}$");
 
@@ -60,7 +59,7 @@ namespace PassPal
             return userInput;
         }
 
-        // Metod för att ta emot användarinput; samma som ovan men med extra funktioner som är ut-kommenterade för senare implementering
+        // Method for user input of master password; commented code are to be implemented after submitted assignment
         public static string UserPasswordInput()
         {
             string userInput = string.Empty;

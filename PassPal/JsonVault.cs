@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PassPal
 {
-    public class JsonVault  //Detta är objeket som ska innehålla en dictionary<string,string>, dvs "valvet", plus det generarade IV:t
+    public class JsonVault  //The object to be stored in server, which stores the encrypted dictionary<string,string> and the unencrypted, randomly generated IV
     {
         public byte[] Vault { get; set; }
         public byte[] IV { get; set; }

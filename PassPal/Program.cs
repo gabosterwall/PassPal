@@ -16,7 +16,7 @@
 
             if(args.Length != 0)
             {
-                // [help] kommando: skriver ut programmets alla kommandon med en kort beskrivning över vad dem gör
+                // Help-command
                 if (args[0].ToLower() == "help")
                 {
                     Console.WriteLine(@"
@@ -27,19 +27,17 @@
                     get    -  display specific password or all current properties in the vault
                     set    -  add or update an existing password in the vault
                     delete -  remove a password from the vault
-                    secret -  display the secret key stored in a client
-                    exit   -  exit the program");
+                    secret -  display the secret key stored in a client");
                 }
 
-                // Init-kommando
+                // Init-command
                 if (args[0].ToLower() == "init" && args.Length == 3)
                 {
                     Console.WriteLine("\nEnter new master password: ");
-                    //string masterPass = PasswordUtilities.UserInput();
                     fileManager.Init(args[1], args[2], PasswordUtilities.UserPasswordInput());
                 }
 
-                // Create-kommando
+                // Create-command
                 if (args[0].ToLower() == "create" && args.Length == 3)
                 {
                     Console.WriteLine("\nEnter your password: ");
@@ -49,8 +47,8 @@
                     fileManager.Create(args[1], args[2], inputPass, secretKey);
                 }
 
-                // Get-kommando
-                if (args[0].ToLower() == "get" && args.Length == 3) // För att lista alla props
+                // Get-command
+                if (args[0].ToLower() == "get" && args.Length == 3) // To list all stored props
                 {
                     if (File.Exists(args[1]))
                     {
@@ -61,7 +59,7 @@
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
-                if (args[0].ToLower() == "get" && args.Length == 4) // För att lista lösenord kopplat till specifikt prop
+                if (args[0].ToLower() == "get" && args.Length == 4) // To list specific password connected to inputed prop
                 {
                     if (File.Exists(args[1]))
                     {
@@ -73,8 +71,8 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // Set-kommando
-                if (args[0].ToLower() == "set" && args.Length == 4) // För att ange eget lösenord
+                // Set-command
+                if (args[0].ToLower() == "set" && args.Length == 4) // To set a new password in the vault
                 {
                     if (File.Exists(args[1]))
                     {
@@ -85,7 +83,7 @@
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
-                if (args[0].ToLower() == "set" && args.Length == 5) // För att generera ett lösenord enligt Regex: [a-zA-Z0-9]{20}
+                if (args[0].ToLower() == "set" && args.Length == 5) // To set a randomly generated password according to Regex: [a-zA-Z0-9]{20}
                 {
                     if (File.Exists(args[1]))
                     {
@@ -97,7 +95,7 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // Delete-kommando
+                // Delete-command
                 if (args[0].ToLower() == "delete")
                 {
                     if (File.Exists(args[1]))
@@ -110,7 +108,7 @@
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
                 }
 
-                // Secret-kommando
+                // Secret-command
                 if (args[0].ToLower() == "secret" && args.Length == 2)
                 {
                     if (File.Exists(args[1]))
@@ -119,13 +117,6 @@
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
-                }
-
-                // Exit-kommando
-                if (args[0].ToLower() == "exit")
-                {
-                    Console.WriteLine("\nThank you for using PassPal!");
-                    Environment.Exit(0);
                 }
             }
             else
