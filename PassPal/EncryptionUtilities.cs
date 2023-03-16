@@ -10,7 +10,7 @@ namespace PassPal
 {
     public class EncryptionUtilities
     {
-        //Metod för att generera slumpmässig nyckel
+        // Method for generating a random secret key
         public byte[] CreateSecretKey()
         {
             const int keySize = 16;
@@ -22,7 +22,7 @@ namespace PassPal
             return secretKey;
         }
 
-        // Metod för att generera slumpmässigt IV
+        // Same as above but for IV
         public byte[] CreateIV()
         {
             const int keySize = 16;
@@ -34,7 +34,7 @@ namespace PassPal
             return randIV;
         }
 
-        // Krypteringsmetod
+        // Method for encryption
         public byte[] EncryptVault(Dictionary<string, string> vault, byte[] vaultKey, byte[] iV)
         {
             byte[] encryptedVault;
@@ -58,7 +58,7 @@ namespace PassPal
             return encryptedVault;
         }
 
-        // Dekrypteringsmetod som även deserialiser och returnerar valv med lösenord
+        // Method for decryption
         public Dictionary<string, string> DecryptVault(byte[] encryptedVault, byte[] vaultKey, byte[] iV)
         {
             string simpleText = string.Empty;

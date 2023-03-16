@@ -11,6 +11,15 @@ namespace PassPalTest
     [TestClass]
     public class IntegrationTests
     {
+        /*
+         *  These automated test were provided to us from teachers in a GIST on GitHub
+         * 
+         *  Creator: Naxxxe on GitHub
+         *  <script src="https://gist.github.com/naxxxe/607494b6b59a4dfe062210d0f4310acb.js"></script>
+         *  
+         */
+
+
         // Arbitrary input values used in many tests.
         string pwd1 = "1234567890";
         string serverPath;
