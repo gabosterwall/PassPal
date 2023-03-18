@@ -32,7 +32,9 @@ namespace PassPal
         {
             const string keyName = "secret";
             string jsonFromClient = File.ReadAllText(args1);
-            Dictionary<string, byte[]> keyFromClient = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(jsonFromClient)!;  // '!' för att detta aldrig kommer vara NULL
+
+            // Switched to ?? throw new ArgumentNullException instead of assigning the null-forgiving '!' at each deserialization; safer for handeling potenital errors
+            Dictionary<string, byte[]> keyFromClient = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(jsonFromClient) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
             return keyFromClient[keyName]; 
         }
 
@@ -53,16 +55,16 @@ namespace PassPal
         // Init-command method
         public void Init(string args1, string args2, string pwd)
         {
-            CreateClient(args1); //Skapar client
+            CreateClient(args1);                                                        // Creates a new client
 
             byte[] secretKey = GetSecretKey(args1);
-            byte[] iV = CreateIV(); //Generar nytt IV för varje instans av en Server
-            byte[] vaultKey = CreateVaultKey(pwd, secretKey); //Skapar derived key (vaultkey) med Rfc2898DeriveBytes
+            byte[] iV = CreateIV();                                                     // Generates a new IV for each new instance of a server
+            byte[] vaultKey = CreateVaultKey(pwd, secretKey);                           // Generates a specific new vault key with master password and secret key with the Rfc2898DeriveBytes-class
 
             Dictionary<string, string> emptyVault = new Dictionary<string, string>();
-            byte[] encryptedVault = EncryptVault(emptyVault, vaultKey, iV); //Enkryptering vars return matchar JsonObject:s egenskaper
+            byte[] encryptedVault = EncryptVault(emptyVault, vaultKey, iV);             // Encryption that returns the type that matches the properties of a JsonVault-object
 
-            JsonVault jsonVault = new JsonVault(encryptedVault, iV);
+            JsonVault jsonVault = new JsonVault(encryptedVault, iV);                    // Assign the properties, and then serialize and write them into a new server-file
             string json = JsonSerializer.Serialize(jsonVault);
             File.WriteAllText(args2, json);
 
@@ -73,7 +75,7 @@ namespace PassPal
         }
 
         // Create-command method
-        public void Create(string args1, string args2, string pwd, string secretKey) // EJ KLAR FIXA SEN
+        public void Create(string args1, string args2, string pwd, string secretKey) 
         {
             if (File.Exists(args2))
             {

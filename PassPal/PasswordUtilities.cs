@@ -64,18 +64,22 @@ namespace PassPal
         {
             string userInput = string.Empty;
 
-            while(string.IsNullOrEmpty(userInput) /*|| userInput.Length < 20*/)                                                                         //LÄGG TILL EFTER INLÄMNING
+            while(string.IsNullOrEmpty(userInput) /*|| userInput.Length < 20*/)                                                                         
             {
                 userInput = Console.ReadLine() ?? throw new ArgumentNullException("\nNull value or empty input.");
 
                 if (userInput == null || userInput == "")
                     Console.WriteLine("\nError: null or empty input value.");
-                //else if (userInput.Length < 20)                                                                                                       //LÄGG TILL EFTER INLÄMNING
+                //else if (userInput.Length < 20)                                                                                                      
                 //    Console.WriteLine("\nError: password must be at least 20 characters long.");
             }
             return userInput;
 
-            //Console.WriteLine($"\n Enter your secret key, then press [Enter]"); ===> Från Stack, men funkar ändå inte för integrationstesterna        //LÄGG TILL EFTER INLÄMNING
+
+            // The following code has been inspired from a user on Stack Overflow: https://stackoverflow.com/questions/3404421/password-masking-console-application
+            // It is not a part of this assignment, only for future implementations
+
+            //Console.WriteLine($"\n Enter your secret key, then press [Enter]"); ===> Från Stack, men funkar ändå inte för integrationstesterna        
             //string inputKey = string.Empty;
             //ConsoleKey key;
             //do
