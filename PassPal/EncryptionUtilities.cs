@@ -14,7 +14,7 @@ namespace PassPal
         public byte[] CreateSecretKey()
         {
             const int keySize = 16;
-            byte[] secretKey = new byte[keySize]; //Rätt storlek? FRÅGA UNDER HANDLEDNING
+            byte[] secretKey = new byte[keySize];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(secretKey);
@@ -26,7 +26,7 @@ namespace PassPal
         public byte[] CreateIV()
         {
             const int keySize = 16;
-            byte[] randIV = new byte[keySize]; //Samma som ovan
+            byte[] randIV = new byte[keySize];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randIV);
