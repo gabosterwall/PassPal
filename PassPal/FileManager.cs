@@ -33,7 +33,7 @@ namespace PassPal
             const string keyName = "secret";
             string jsonFromClient = File.ReadAllText(args1);
 
-            // Switched to ?? throw new ArgumentNullException instead of assigning the null-forgiving '!' at each deserialization; safer for handeling potenital errors
+            // Switched to ?? throw new ArgumentNullException instead of assigning the null-forgiving '!' at each deserialization; safer for handling potenital errors
             Dictionary<string, byte[]> keyFromClient = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(jsonFromClient) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");
             return keyFromClient[keyName]; 
         }
@@ -43,7 +43,7 @@ namespace PassPal
         {
             int iterations = 10000; //iterations, recommended amount
             byte[] vaultKey;
-            int keySize = 32;
+            int keySize = 16;
 
             using (Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(masterPass, secretKey, iterations, HashAlgorithmName.SHA256))
             {
@@ -75,14 +75,15 @@ namespace PassPal
         }
 
         // Create-command method
-        public void Create(string args1, string args2, string pwd, string secretKey) 
+        public void Create(string args1, string args2, string pwd/*, string secretKey*/) 
         {
             if (File.Exists(args2))
             {
                 try
                 {
                     const string keyName = "secret";
-                    byte[] key = Convert.FromBase64String(secretKey);
+                    Console.WriteLine("\nEnter your secret key: ");
+                    byte[] key = Convert.FromBase64String(PasswordUtilities.UserKeyInput());
                     byte[] vaultKey = CreateVaultKey(pwd, key);
 
                     JsonVault jsonVault = JsonSerializer.Deserialize<JsonVault>(File.ReadAllText(args2)) ?? throw new ArgumentNullException("\nError: argument was null, command aborted");

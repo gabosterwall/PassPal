@@ -41,10 +41,7 @@
                 if (args[0].ToLower() == "create" && args.Length == 3)
                 {
                     Console.WriteLine("\nEnter your password: ");
-                    string inputPass = PasswordUtilities.UserPasswordInput();
-                    Console.WriteLine("\nEnter your secret key: ");
-                    string secretKey = PasswordUtilities.UserKeyInput();
-                    fileManager.Create(args[1], args[2], inputPass, secretKey);
+                    fileManager.Create(args[1], args[2], PasswordUtilities.UserPasswordInput());
                 }
 
                 // Get-command
@@ -53,8 +50,7 @@
                     if (File.Exists(args[1]))
                     {
                         Console.WriteLine("\nEnter your password: ");
-                        string inputPass = PasswordUtilities.UserPasswordInput();
-                        fileManager.Get(args[1], args[2], inputPass);
+                        fileManager.Get(args[1], args[2], PasswordUtilities.UserPasswordInput());
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
@@ -64,8 +60,7 @@
                     if (File.Exists(args[1]))
                     {
                         Console.WriteLine("\nEnter your password: ");
-                        string inputPass = PasswordUtilities.UserPasswordInput();
-                        fileManager.Get(args[1], args[2], inputPass, args[3]);
+                        fileManager.Get(args[1], args[2], PasswordUtilities.UserPasswordInput(), args[3]);
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
@@ -77,8 +72,7 @@
                     if (File.Exists(args[1]))
                     {
                         Console.WriteLine("\nEnter your password: ");
-                        string inputPass = PasswordUtilities.UserPasswordInput();
-                        fileManager.Set(args[1], args[2], inputPass, args[3]);
+                        fileManager.Set(args[1], args[2], PasswordUtilities.UserPasswordInput(), args[3]);
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
@@ -88,8 +82,7 @@
                     if (File.Exists(args[1]))
                     {
                         Console.WriteLine("\nEnter your password: ");
-                        string inputPass = PasswordUtilities.UserPasswordInput();
-                        fileManager.Set(args[1], args[2], inputPass, args[3], args[4]);
+                        fileManager.Set(args[1], args[2], PasswordUtilities.UserPasswordInput(), args[3], args[4]);
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
@@ -101,8 +94,7 @@
                     if (File.Exists(args[1]))
                     {
                         Console.WriteLine("\nEnter your password: ");
-                        string inputPass = PasswordUtilities.UserPasswordInput();
-                        fileManager.Delete(args[1], args[2], args[3], inputPass);
+                        fileManager.Delete(args[1], args[2], args[3], PasswordUtilities.UserPasswordInput());
                     }
                     else
                         Console.WriteLine($"\nError:'{args[1]}' could not be found, command aborted.");
